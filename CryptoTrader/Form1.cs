@@ -6,12 +6,16 @@ using System.Drawing;
 using System.Linq;
 using System.Net.WebSockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using Binance.Net;
 using Binance.Net.Enums;
 using Binance.Net.Objects.Spot;
+using Binance.Net.Objects.Spot.MarketData;
+using Binance.Net.Objects.Spot.MarketStream;
+using CryptoExchange.Net.Authentication;
 using CryptoExchange.Net.Objects;
 using CryptoExchange.Net.Sockets;
 
@@ -20,34 +24,33 @@ namespace CryptoTrader
     public partial class Form1 : Form
     {
         BinanceSocketClient client;
+        List<BinanceKline> candleSticks;
         CallResult<UpdateSubscription> candleSubscription;
 
         public Form1()
         {
             InitializeComponent();
             client = new BinanceSocketClient();
-            candleChart.Series[0].ChartType = SeriesChartType.Candlestick;
-            candleChart.Series[0]["PriceUpColor"] = "Green"; // <<== use text indexer for series
-            candleChart.Series[0]["PriceDownColor"] = "Red"; // <<== use text indexer for series
+
+            candleSticks = new List<BinanceKline>();
+
             candleChart.Series[0].Points.Clear();
-
-            // Set automatic zooming
-            candleChart.ChartAreas[0].AxisX.ScaleView.Zoomable = true;
-            candleChart.ChartAreas[0].AxisY.ScaleView.Zoomable = true;
-
-            // Set automatic scrolling 
-            candleChart.ChartAreas[0].CursorX.AutoScroll = true;
-            candleChart.ChartAreas[0].CursorY.AutoScroll = true;
-
-            // Allow user selection for Zoom
-            candleChart.ChartAreas[0].CursorX.IsUserSelectionEnabled = true;
-            candleChart.ChartAreas[0].CursorY.IsUserSelectionEnabled = true;
+            candleChart.ChartAreas[0].AxisY.IsStartedFromZero = false;
         }
 
         private void startWebsocketButton_Click(object sender, EventArgs e)
         {
+            BinanceClient.SetDefaultOptions(new BinanceClientOptions()
+            {
+                ApiCredentials = new ApiCredentials(apiKeyText.Text, apiSecretText.Text),
+            });
+            BinanceSocketClient.SetDefaultOptions(new BinanceSocketClientOptions()
+            {
+                ApiCredentials = new ApiCredentials(apiKeyText.Text, apiSecretText.Text),
+            });
+
             candleSubscription = client.SubscribeToKlineUpdates("ethbtc", KlineInterval.OneMinute, update => {
-                AddValue(update.Data.OpenTime, update.Data.High, update.Data.Low, update.Data.Open, update.Data.Close);
+                AddValue(update.Data.ToKline());
             });
         }
 
@@ -57,17 +60,29 @@ namespace CryptoTrader
         }
 
         //Delegate because addvalue is accessed from a different thread
-        delegate void AddValueCallback(DateTime openTime, decimal high, decimal low, decimal open, decimal close);
+        delegate void AddValueCallback(BinanceKline k);
 
-        private void AddValue(DateTime openTime, decimal high, decimal low, decimal open, decimal close) 
+        private void AddValue(BinanceKline k) 
         {
             if (candleChart.InvokeRequired) {
                 AddValueCallback d = new AddValueCallback(AddValue);
-                this.Invoke(d, new object[] { openTime, high, low, open, close });
+                this.Invoke(d, k);
             }
             else
             {
-                candleChart.Series[0].Points.AddXY(openTime, high, low, open, close);
+                if (candleSticks.Count > 0 && candleSticks.Last().OpenTime == k.OpenTime)
+                {
+                    //Same as last candle, update values
+                    candleSticks[candleSticks.Count - 1] = k;
+                    candleChart.Series[0].Points.RemoveAt(candleChart.Series[0].Points.Count - 1);
+                    candleChart.Series[0].Points.AddXY(k.OpenTime.ToShortTimeString(), k.High, k.Low, k.Open, k.Close);
+
+                } else {
+                    //New candle
+                    candleSticks.Add(k);
+                    candleChart.Series[0].Points.AddXY(k.OpenTime.ToShortTimeString(), k.High, k.Low, k.Open, k.Close);
+                }
+
                 candleChart.ChartAreas[0].RecalculateAxesScale();
             }
         }

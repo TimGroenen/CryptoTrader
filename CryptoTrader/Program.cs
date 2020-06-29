@@ -18,14 +18,6 @@ namespace CryptoTrader
         [STAThread]
         static void Main()
         {
-            BinanceClient.SetDefaultOptions(new BinanceClientOptions()
-            {
-                ApiCredentials = new ApiCredentials("key", "secret"),
-            });
-            BinanceSocketClient.SetDefaultOptions(new BinanceSocketClientOptions()
-            {
-                ApiCredentials = new ApiCredentials("key", "secret"),
-            });
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());

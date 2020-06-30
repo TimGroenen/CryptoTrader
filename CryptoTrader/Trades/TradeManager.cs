@@ -2,13 +2,16 @@
 using Binance.Net.Enums;
 using Binance.Net.Objects.Spot;
 using Binance.Net.Objects.Spot.MarketData;
+using Binance.Net.Objects.Spot.SpotData;
 using CryptoExchange.Net.Authentication;
 using CryptoExchange.Net.Objects;
 using CryptoExchange.Net.Sockets;
+using CryptoTrader.Strategies;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CryptoTrader.Trades
@@ -18,23 +21,69 @@ namespace CryptoTrader.Trades
     {
         private readonly BinanceSocketClient websocketClient;
         private readonly BinanceClient apiClient;
+        private List<BinanceKline> backTestData;
         private List<BinanceKline> candles;
         private readonly TradingView tradeView;
         private CallResult<UpdateSubscription> candleSubscription;
+        private TradeManagerConfig config;
+        private decimal currentBalance = 0;
+        private decimal currentAltBalance = 0;
+        private bool isBuying = true;
+        private IStrategy strategy;
+        private List<BinanceOrder> transactionLog;
+        private string pair = "ETHBTC";
 
-        public TradeManager(TradingView tradeView) {
+        public TradeManager(TradingView tradeView, TradeManagerConfig config, IStrategy strategy) {
             this.tradeView = tradeView;
             this.websocketClient = new BinanceSocketClient();
             this.apiClient = new BinanceClient();
             this.candles = new List<BinanceKline>();
+            this.backTestData = new List<BinanceKline>();
+            this.config = config;
+            currentBalance = config.BalanceStart;
+            transactionLog = new List<BinanceOrder>();
+            this.strategy = strategy;
         }
 
-        public void StartTrading(string key, string secret) {
+        public void StartBackTesting(string key, string secret, DateTime startDate) {
             //Configure settings
             SetKeys(key, secret);
 
             //Get past candles to calculate indicators
-            Task<WebCallResult<IEnumerable<BinanceKline>>> task = apiClient.GetKlinesAsync("ETHBTC", KlineInterval.OneMinute, null, null, 100, default);
+            Task<WebCallResult<IEnumerable<BinanceKline>>> task = apiClient.GetKlinesAsync(pair, KlineInterval.OneMinute, startDate, null, 1000, default);
+            IEnumerable<BinanceKline> result = new List<BinanceKline>();
+
+            Task continueation = task.ContinueWith(t => {
+                if (t.Result.Success)
+                {
+                    backTestData.AddRange(t.Result.Data.ToList());
+
+                    foreach (BinanceKline k in backTestData)
+                    {
+                        //Update UI and candleList
+                        UpdateData(k);
+
+                        //Check for and execute trade
+                        ExecuteTrade();
+                        UpdateUIText(currentBalance, currentAltBalance, null);
+                        Thread.Sleep(75);
+                    }
+                }
+                else
+                {
+                    tradeView.ShowMessage(t.Result.Error.Message);
+                }
+            });
+
+            task.Wait();
+        }
+
+        public void StartLiveTrading(string key, string secret) {
+            //Configure settings
+            SetKeys(key, secret);
+
+            //Get past candles to calculate indicators
+            Task<WebCallResult<IEnumerable<BinanceKline>>> task = apiClient.GetKlinesAsync(pair, KlineInterval.OneMinute, null, null, 100, default);
             IEnumerable<BinanceKline> result = new List<BinanceKline>();
 
             Task continueation = task.ContinueWith(t => {
@@ -52,19 +101,87 @@ namespace CryptoTrader.Trades
             task.Wait();
 
             //Start subscription
-            candleSubscription = websocketClient.SubscribeToKlineUpdates("ETHBTC", KlineInterval.OneMinute, update => {
-                //Decide if a new trade has to be made
+            candleSubscription = websocketClient.SubscribeToKlineUpdates(pair, KlineInterval.OneMinute, update => {
+                //Update UI and candleList
+                UpdateData(update.Data.ToKline());
 
-                //Execute trade
-
-                //Log trade
-
-                //Update UI
-                UpdateCandleChart(update.Data.ToKline());
+                //Check for and execute trade, update ui
+                ExecuteTrade();
+                UpdateUIText(currentBalance, currentAltBalance, null);
             });
         }
 
-        public void StopTrading() {
+        private void ExecuteTrade() {
+            BinanceOrder order = null;
+
+            //Decide if a new trade has to be made
+            if (isBuying)
+            {
+                //Look for buy
+                if (strategy.ShouldBuy(candles))
+                {
+                    //Create order at last price
+                    order = new BinanceOrder
+                    {
+                        Side = OrderSide.Buy,
+                        Type = OrderType.Market,
+                        Symbol = pair,
+                        Quantity = currentBalance * (config.PercentageBuy / 100),
+                        Price = candles[candles.Count - 1].Close,
+                    };
+
+                    //Update currentBalance
+                    currentBalance -= order.Quantity;
+                    currentAltBalance = (order.Quantity - (order.Quantity * (decimal)0.005)) / order.Price;
+                }
+            }
+            else
+            {
+                //Look for sell
+                if (strategy.ShouldSell(candles))
+                {
+                    //Create order at last price
+                    order = new BinanceOrder
+                    {
+                        Side = OrderSide.Sell,
+                        Type = OrderType.Market,
+                        Symbol = pair,
+                        Quantity = currentAltBalance,
+                        Price = candles[candles.Count - 1].Close,
+                    };
+
+                    //Update currentBalance
+                    currentBalance += (order.Quantity - (order.Quantity * (decimal)0.005)) * order.Price;
+                    currentAltBalance = 0;
+                }
+            }
+
+            if (order != null)
+            {
+                //Execute order
+                transactionLog.Add(order);
+
+                if (order.Side == OrderSide.Buy)
+                {
+                    PlaceMarker(candles[candles.Count - 1].OpenTime, order.Price, Color.Lime);
+                }
+                else
+                {
+                    PlaceMarker(candles[candles.Count - 1].OpenTime, order.Price, Color.Red);
+
+                    //Update transactions
+                    UpdateUIText(currentBalance, currentAltBalance, new Transaction(
+                        transactionLog[transactionLog.Count - 2].Price, 
+                        transactionLog[transactionLog.Count - 1].Price, 
+                        transactionLog[transactionLog.Count - 2].Quantity
+                    ));
+                }
+
+                isBuying = !isBuying;
+            }
+        }
+
+        public void StopLiveTrading() {
             //Sell open position (market price? or limit?)
 
             //Unsubscribe websockets
@@ -82,7 +199,7 @@ namespace CryptoTrader.Trades
             });
         }
 
-        private void UpdateCandleChart(BinanceKline k) {
+        private void UpdateData(BinanceKline k) {
             if (candles.Count > 0 && candles[candles.Count - 1].OpenTime == k.OpenTime) {
                 candles[candles.Count - 1] = k;
                 tradeView.AddValue(k, true);
@@ -99,6 +216,10 @@ namespace CryptoTrader.Trades
 
         private void PlaceMarker(DateTime openTime, decimal close, Color color) {
             tradeView.PlaceMarker(openTime, close, color);
+        }
+
+        private void UpdateUIText(decimal currentBalance, decimal currentAltBalance, Transaction t) {
+            tradeView.UpdateUIText(currentBalance, currentAltBalance, t);
         }
     }
 }

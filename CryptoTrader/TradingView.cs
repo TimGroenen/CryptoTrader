@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using Binance.Net.Objects.Spot.MarketData;
+using CryptoTrader.Strategies;
 using CryptoTrader.Trades;
 
 namespace CryptoTrader
@@ -10,24 +11,35 @@ namespace CryptoTrader
     public partial class TradingView : Form
     {
         private TradeManager tradeManager;
+        private List<Transaction> transactions;
+        private int numTrades = 0;
+        private decimal avgProfit = 0;
+        private decimal totalProfit = 0;
 
         public TradingView()
         {
             InitializeComponent();
-            tradeManager = new TradeManager(this);
             candleChart.ChartAreas[0].AxisY.IsStartedFromZero = false;
-            candleChart.ChartAreas[0].AxisX.ScrollBar.Enabled = true;
+            transactions = new List<Transaction>();
+            BackTestDate.MaxDate = DateTime.Now;
         }
 
         private void startWebsocketButton_Click(object sender, EventArgs e)
         {
+            tradeManager = new TradeManager(this, new TradeManagerConfig(TrainingStartBalanceNum.Value, BuySizePercentage.Value), new MomentumStrategy());
             candleChart.Series[0].Points.Clear();
-            tradeManager.StartTrading(apiKeyText.Text, apiSecretText.Text);
+            candleChart.Series[1].Points.Clear();
+            tradeManager.StartLiveTrading(apiKeyText.Text, apiSecretText.Text);
         }
 
         private void stopWebsocketButton_Click(object sender, EventArgs e)
         {
-            tradeManager.StopTrading();
+            if (tradeManager == null) { 
+                ShowMessage("No socket active");
+                return;
+            }
+
+            tradeManager.StopLiveTrading();
         }
 
         //Delegate because addvalue is accessed from a different thread
@@ -51,7 +63,8 @@ namespace CryptoTrader
                     //New candle
                     candleChart.Series[0].Points.AddXY(k.OpenTime, k.High, k.Low, k.Open, k.Close);
 
-                    if (candleChart.Series[0].Points.Count > 50)
+                    //Remove candles
+                    if (candleChart.Series[0].Points.Count > 100)
                     {
                         if (candleChart.Series["Transaction"].Points.Count > 0 && candleChart.Series["Transaction"].Points[0].XValue == candleChart.Series["Price"].Points[0].XValue)
                         {
@@ -102,8 +115,42 @@ namespace CryptoTrader
             }
         }
 
+        delegate void UpdateUITextCallback(decimal currentBalance, decimal currentAltBalance, Transaction t);
+
+        public void UpdateUIText(decimal currentBalance, decimal currentAltBalance, Transaction t)
+        {
+            if (candleChart.InvokeRequired)
+            {
+                UpdateUITextCallback d = new UpdateUITextCallback(UpdateUIText);
+                this.Invoke(d, currentBalance, currentAltBalance, t);
+            } else { 
+                CurrentBalanceLabel.Text = "Current Balance: " + currentBalance;
+                CurrentAltBalanceLabel.Text = "Current Alt Balance: " + currentAltBalance;
+
+                if (t != null) {
+                    transactions.Add(t);
+                    numTrades++;
+                    totalProfit += t.Profit;
+                    avgProfit = totalProfit / numTrades;
+
+                    TotalTradesLabel.Text = "Total trades: " + numTrades;
+                    TotalProfitLabel.Text = "Total profit: " + Math.Round((((currentBalance - TrainingStartBalanceNum.Value) / TrainingStartBalanceNum.Value) * 100), 2);
+                    AverageProfitLabel.Text = "Average profit: " + avgProfit;
+                    HodlProfitLabel.Text = "HODL profit: " + Math.Round((((transactions[transactions.Count - 1].SellPrice - transactions[0].BuyPrice) / transactions[0].BuyPrice) * 100), 2);
+                }
+            }
+        }
+
         public void ShowMessage(string text) {
             MessageBox.Show(text);
+        }
+
+        private void BackTestButton_Click(object sender, EventArgs e)
+        {
+            tradeManager = new TradeManager(this, new TradeManagerConfig(TrainingStartBalanceNum.Value, BuySizePercentage.Value), new MomentumStrategy());
+            candleChart.Series[0].Points.Clear();
+            candleChart.Series[1].Points.Clear();
+            tradeManager.StartBackTesting(apiKeyText.Text, apiSecretText.Text, BackTestDate.Value);
         }
     }
 }

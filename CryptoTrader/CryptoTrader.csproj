@@ -136,6 +136,7 @@
   <ItemGroup>
     <Compile Include="Strategies\IStrategy.cs" />
     <Compile Include="Strategies\MomentumStrategy.cs" />
+    <Compile Include="Tools\CandleGranulation.cs" />
     <Compile Include="Trades\TradeManagerConfig.cs" />
     <Compile Include="Trades\Transaction.cs" />
     <Compile Include="TradingView.cs">

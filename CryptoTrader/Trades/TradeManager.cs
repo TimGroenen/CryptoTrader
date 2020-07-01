@@ -7,6 +7,7 @@ using CryptoExchange.Net.Authentication;
 using CryptoExchange.Net.Objects;
 using CryptoExchange.Net.Sockets;
 using CryptoTrader.Strategies;
+using CryptoTrader.Tools;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -56,7 +57,7 @@ namespace CryptoTrader.Trades
             Task continueation = task.ContinueWith(t => {
                 if (t.Result.Success)
                 {
-                    backTestData.AddRange(t.Result.Data.ToList());
+                    backTestData.AddRange(CandleGranulation.AverageOpenToClose(t.Result.Data.ToList(), 3));
 
                     foreach (BinanceKline k in backTestData)
                     {
@@ -66,7 +67,7 @@ namespace CryptoTrader.Trades
                         //Check for and execute trade
                         ExecuteTrade();
                         UpdateUIText(currentBalance, currentAltBalance, null);
-                        Thread.Sleep(75);
+                        Thread.Sleep(15);
                     }
                 }
                 else

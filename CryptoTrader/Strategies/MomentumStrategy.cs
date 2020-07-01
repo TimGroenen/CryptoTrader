@@ -13,14 +13,16 @@ namespace CryptoTrader.Strategies
         {
             if (candles.Count < 5) return false;
 
-            return (candles[candles.Count - 1].Close - candles[candles.Count - 2].Open > (candles[candles.Count - 2].Close / 10000) * 4)&& candles[candles.Count - 2].Open < candles[candles.Count - 2].Close;
+            bool firstPositive = candles[candles.Count - 1].Close > candles[candles.Count - 1].Open;
+            bool secondPositive = candles[candles.Count - 2].Close > candles[candles.Count - 2].Open;
+            return (firstPositive && secondPositive) || (candles[candles.Count - 1].Close - candles[candles.Count - 2].Open > (candles[candles.Count - 2].Close / 10000) * 4);
         }
 
         public bool ShouldSell(List<BinanceKline> candles)
         {
             if (candles.Count < 5) return false;
 
-            return candles[candles.Count - 2].Close - candles[candles.Count - 1].Close > (candles[candles.Count - 2].Close / 10000);
+            return candles[candles.Count - 2].Close - candles[candles.Count - 1].Close > (candles[candles.Count - 2].Close / 5000);
         }
     }
 }

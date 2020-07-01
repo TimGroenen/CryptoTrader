@@ -66,7 +66,7 @@ namespace CryptoTrader
                     //Remove candles
                     if (candleChart.Series[0].Points.Count > 100)
                     {
-                        if (candleChart.Series["Transaction"].Points.Count > 0 && candleChart.Series["Transaction"].Points[0].XValue == candleChart.Series["Price"].Points[0].XValue)
+                        if (candleChart.Series["Transaction"].Points.Count > 0 && candleChart.Series["Transaction"].Points[0].XValue < candleChart.Series["Price"].Points[0].XValue)
                         {
                             candleChart.Series["Transaction"].Points.RemoveAt(0);
                         }
@@ -91,7 +91,7 @@ namespace CryptoTrader
 
                     if (candleChart.Series[0].Points.Count > 100)
                     {
-                        if (candleChart.Series["Transaction"].Points.Count > 0 && candleChart.Series["Transaction"].Points[0].XValue == candleChart.Series["Price"].Points[0].XValue)
+                        if (candleChart.Series["Transaction"].Points.Count > 0 && candleChart.Series["Transaction"].Points[0].XValue < candleChart.Series["Price"].Points[0].XValue)
                         {
                             candleChart.Series["Transaction"].Points.RemoveAt(0);
                         }

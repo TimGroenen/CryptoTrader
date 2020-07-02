@@ -26,7 +26,7 @@ namespace CryptoTrader.Tools
                 decimal step = diff / (decimal)steps;
 
                 //Skip candles that do not pass the min difference
-                if (diff < minDiff) {
+                if ((diff < minDiff && diff > 0) || (diff > minDiff * -1 && diff < 0)) {
                     output.Add(candle);
                     continue;
                 }

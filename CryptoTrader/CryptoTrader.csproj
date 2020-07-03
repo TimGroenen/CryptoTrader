@@ -134,6 +134,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\IndicatorKline.cs" />
     <Compile Include="Strategies\IStrategy.cs" />
     <Compile Include="Strategies\MomentumStrategy.cs" />
     <Compile Include="Tools\CandleGranulation.cs" />

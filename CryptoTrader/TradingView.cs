@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using Binance.Net.Objects.Spot.MarketData;
+using CryptoTrader.Models;
 using CryptoTrader.Strategies;
 using CryptoTrader.Trades;
 
@@ -26,9 +27,11 @@ namespace CryptoTrader
 
         private void startWebsocketButton_Click(object sender, EventArgs e)
         {
-            tradeManager = new TradeManager(this, new TradeManagerConfig(TrainingStartBalanceNum.Value, BuySizePercentage.Value), new MomentumStrategy());
+            tradeManager = new TradeManager(this, new TradeManagerConfig(TrainingStartBalanceNum.Value, BuySizePercentage.Value, (int)ShortMANum.Value, (int)LongMANum.Value), new MomentumStrategy());
             candleChart.Series[0].Points.Clear();
             candleChart.Series[1].Points.Clear();
+            candleChart.Series[2].Points.Clear();
+            candleChart.Series[3].Points.Clear();
             tradeManager.StartLiveTrading(apiKeyText.Text, apiSecretText.Text);
         }
 
@@ -43,9 +46,9 @@ namespace CryptoTrader
         }
 
         //Delegate because addvalue is accessed from a different thread
-        delegate void AddValueCallback(BinanceKline k, bool updateValue);
+        delegate void AddValueCallback(IndicatorKline k, bool updateValue);
 
-        public void AddValue(BinanceKline k, bool updateValue)
+        public void AddValue(IndicatorKline k, bool updateValue)
         {
             if (candleChart.InvokeRequired) {
                 AddValueCallback d = new AddValueCallback(AddValue);
@@ -56,12 +59,32 @@ namespace CryptoTrader
                 if (updateValue)
                 {
                     //Same as last candle, update values
-                    candleChart.Series[0].Points.RemoveAt(candleChart.Series[0].Points.Count - 1);
-                    candleChart.Series[0].Points.AddXY(k.OpenTime, k.High, k.Low, k.Open, k.Close);
+                    candleChart.Series["Price"].Points.RemoveAt(candleChart.Series["Price"].Points.Count - 1);
+                    candleChart.Series["Price"].Points.AddXY(k.OpenTime, k.High, k.Low, k.Open, k.Close);
 
+                    if (k.ShortMovingAverage > 0 && candleChart.Series["ShortMA"].Points.Count > 0) { 
+                        candleChart.Series["ShortMA"].Points.RemoveAt(candleChart.Series["ShortMA"].Points.Count - 1);
+                        candleChart.Series["ShortMA"].Points.AddXY(k.OpenTime, k.ShortMovingAverage);
+
+                        if (k.LongMovingAverage > 0 && candleChart.Series["LongMA"].Points.Count > 0)
+                        {
+                            candleChart.Series["LongMA"].Points.RemoveAt(candleChart.Series["LongMA"].Points.Count - 1);
+                            candleChart.Series["LongMA"].Points.AddXY(k.OpenTime, k.LongMovingAverage);
+                        }
+                    }
                 } else {
                     //New candle
-                    candleChart.Series[0].Points.AddXY(k.OpenTime, k.High, k.Low, k.Open, k.Close);
+                    candleChart.Series["Price"].Points.AddXY(k.OpenTime, k.High, k.Low, k.Open, k.Close);
+
+                    if (k.ShortMovingAverage > 0)
+                    {
+                        candleChart.Series["ShortMA"].Points.AddXY(k.OpenTime, k.ShortMovingAverage);
+
+                        if (k.LongMovingAverage > 0)
+                        {
+                            candleChart.Series["LongMA"].Points.AddXY(k.OpenTime, k.LongMovingAverage);
+                        }
+                    }
 
                     //Remove candles
                     if (candleChart.Series[0].Points.Count > 100)
@@ -70,7 +93,13 @@ namespace CryptoTrader
                         {
                             candleChart.Series["Transaction"].Points.RemoveAt(0);
                         }
-                        candleChart.Series[0].Points.RemoveAt(0);
+                        if (candleChart.Series["ShortMA"].Points.Count > 100) {
+                            candleChart.Series["ShortMA"].Points.RemoveAt(0);
+                        }
+                        if (candleChart.Series["LongMA"].Points.Count > 100) {
+                            candleChart.Series["LongMA"].Points.RemoveAt(0);
+                        }
+                        candleChart.Series["Price"].Points.RemoveAt(0);
                     }
                 }
 
@@ -78,24 +107,32 @@ namespace CryptoTrader
             }
         }
 
-        delegate void AddCandlesCallback(List<BinanceKline> candles);
+        delegate void AddCandlesCallback(List<IndicatorKline> candles);
 
-        public void AddCandles(List<BinanceKline> candles) {
+        public void AddCandles(List<IndicatorKline> candles) {
             if (candleChart.InvokeRequired) {
                 AddCandlesCallback d = new AddCandlesCallback(AddCandles);
                 this.Invoke(d, candles);
             } else {
-                foreach (BinanceKline k in candles)
+                foreach (IndicatorKline k in candles)
                 {
-                    candleChart.Series[0].Points.AddXY(k.OpenTime, k.High, k.Low, k.Open, k.Close);
+                    candleChart.Series["Price"].Points.AddXY(k.OpenTime, k.High, k.Low, k.Open, k.Close);
 
-                    if (candleChart.Series[0].Points.Count > 100)
+                    if (candleChart.Series["Price"].Points.Count > 100)
                     {
                         if (candleChart.Series["Transaction"].Points.Count > 0 && candleChart.Series["Transaction"].Points[0].XValue < candleChart.Series["Price"].Points[0].XValue)
                         {
                             candleChart.Series["Transaction"].Points.RemoveAt(0);
                         }
-                        candleChart.Series[0].Points.RemoveAt(0);
+                        if (candleChart.Series["ShortMA"].Points.Count > 100)
+                        {
+                            candleChart.Series["ShortMA"].Points.RemoveAt(0);
+                        }
+                        if (candleChart.Series["LongMA"].Points.Count > 100)
+                        {
+                            candleChart.Series["LongMA"].Points.RemoveAt(0);
+                        }
+                        candleChart.Series["Price"].Points.RemoveAt(0);
                     }
                 }
                 candleChart.ChartAreas[0].RecalculateAxesScale();
@@ -147,9 +184,11 @@ namespace CryptoTrader
 
         private void BackTestButton_Click(object sender, EventArgs e)
         {
-            tradeManager = new TradeManager(this, new TradeManagerConfig(TrainingStartBalanceNum.Value, BuySizePercentage.Value), new MomentumStrategy());
+            tradeManager = new TradeManager(this, new TradeManagerConfig(TrainingStartBalanceNum.Value, BuySizePercentage.Value, (int)ShortMANum.Value, (int)LongMANum.Value), new MomentumStrategy());
             candleChart.Series[0].Points.Clear();
             candleChart.Series[1].Points.Clear();
+            candleChart.Series[2].Points.Clear();
+            candleChart.Series[3].Points.Clear();
             tradeManager.StartBackTesting(apiKeyText.Text, apiSecretText.Text, BackTestDate.Value);
         }
     }

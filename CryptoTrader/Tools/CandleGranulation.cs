@@ -1,4 +1,6 @@
 ﻿using Binance.Net.Objects.Spot.MarketData;
+using CryptoTrader.Models;
+using CryptoTrader.Trades;
 using System;
 using System.Collections.Generic;
 using System.Data.Odbc;
@@ -15,11 +17,11 @@ namespace CryptoTrader.Tools
 
         //Increase the number of candles to simulate websocket speed
         //Average from open to close with x amount of steps
-        public static List<BinanceKline> AverageOpenToClose(List<BinanceKline> input, int steps) 
+        public static List<IndicatorKline> AverageOpenToClose(List<IndicatorKline> input, int steps, TradeManagerConfig config) 
         {
-            List<BinanceKline> output = new List<BinanceKline>();
+            List<IndicatorKline> output = new List<IndicatorKline>();
 
-            foreach (BinanceKline candle in input) 
+            foreach (IndicatorKline candle in input) 
             {
                 //Calculate difference between open and close
                 decimal diff = candle.Close - candle.Open;
@@ -52,7 +54,7 @@ namespace CryptoTrader.Tools
                     newKline.High = candle.High;
                     newKline.Low = candle.Low;
 
-                    output.Add(newKline);
+                    output.Add(new IndicatorKline(newKline, output, config.ShortMA, config.LongMA));
                 }
             }
 

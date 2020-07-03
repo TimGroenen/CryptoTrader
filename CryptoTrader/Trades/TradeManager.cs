@@ -6,6 +6,7 @@ using Binance.Net.Objects.Spot.SpotData;
 using CryptoExchange.Net.Authentication;
 using CryptoExchange.Net.Objects;
 using CryptoExchange.Net.Sockets;
+using CryptoTrader.Models;
 using CryptoTrader.Strategies;
 using CryptoTrader.Tools;
 using System;
@@ -22,8 +23,8 @@ namespace CryptoTrader.Trades
     {
         private readonly BinanceSocketClient websocketClient;
         private readonly BinanceClient apiClient;
-        private List<BinanceKline> backTestData;
-        private List<BinanceKline> candles;
+        private List<IndicatorKline> backTestData;
+        private List<IndicatorKline> candles;
         private readonly TradingView tradeView;
         private CallResult<UpdateSubscription> candleSubscription;
         private TradeManagerConfig config;
@@ -38,8 +39,8 @@ namespace CryptoTrader.Trades
             this.tradeView = tradeView;
             this.websocketClient = new BinanceSocketClient();
             this.apiClient = new BinanceClient();
-            this.candles = new List<BinanceKline>();
-            this.backTestData = new List<BinanceKline>();
+            this.candles = new List<IndicatorKline>();
+            this.backTestData = new List<IndicatorKline>();
             this.config = config;
             currentBalance = config.BalanceStart;
             transactionLog = new List<BinanceOrder>();
@@ -52,14 +53,19 @@ namespace CryptoTrader.Trades
 
             //Get past candles to calculate indicators
             Task<WebCallResult<IEnumerable<BinanceKline>>> task = apiClient.GetKlinesAsync(pair, KlineInterval.OneMinute, startDate, null, 1000, default);
-            IEnumerable<BinanceKline> result = new List<BinanceKline>();
 
             Task continueation = task.ContinueWith(t => {
                 if (t.Result.Success)
                 {
-                    backTestData.AddRange(CandleGranulation.AverageOpenToClose(t.Result.Data.ToList(), 3));
+                    List<IndicatorKline> data = new List<IndicatorKline>();
 
-                    foreach (BinanceKline k in backTestData)
+                    foreach (BinanceKline bk in t.Result.Data.ToList()) {
+                        data.Add(new IndicatorKline(bk, data, config.ShortMA, config.LongMA));
+                    }
+
+                    backTestData.AddRange(CandleGranulation.AverageOpenToClose(data, 3, config));
+
+                    foreach (IndicatorKline k in backTestData)
                     {
                         //Update UI and candleList
                         UpdateData(k);
@@ -85,12 +91,19 @@ namespace CryptoTrader.Trades
 
             //Get past candles to calculate indicators
             Task<WebCallResult<IEnumerable<BinanceKline>>> task = apiClient.GetKlinesAsync(pair, KlineInterval.OneMinute, null, null, 100, default);
-            IEnumerable<BinanceKline> result = new List<BinanceKline>();
+            IEnumerable<IndicatorKline> result = new List<IndicatorKline>();
 
             Task continueation = task.ContinueWith(t => {
                 if (t.Result.Success)
                 {
-                    AddPastCandles(task.Result.Data.ToList());
+                    List<IndicatorKline> data = new List<IndicatorKline>();
+
+                    foreach (BinanceKline bk in t.Result.Data.ToList())
+                    {
+                        data.Add(new IndicatorKline(bk, data, config.ShortMA, config.LongMA));
+                    }
+
+                    AddPastCandles(data);
 
                     //Place marker to signify startpoint
                     PlaceMarker(candles[candles.Count - 1].OpenTime, candles[candles.Count - 1].Close, Color.Blue);
@@ -104,7 +117,7 @@ namespace CryptoTrader.Trades
             //Start subscription
             candleSubscription = websocketClient.SubscribeToKlineUpdates(pair, KlineInterval.OneMinute, update => {
                 //Update UI and candleList
-                UpdateData(update.Data.ToKline());
+                UpdateData(new IndicatorKline(update.Data.ToKline(), candles, config.ShortMA, config.LongMA));
 
                 //Check for and execute trade, update ui
                 ExecuteTrade();
@@ -200,7 +213,7 @@ namespace CryptoTrader.Trades
             });
         }
 
-        private void UpdateData(BinanceKline k) {
+        private void UpdateData(IndicatorKline k) {
             if (candles.Count > 0 && candles[candles.Count - 1].OpenTime == k.OpenTime) {
                 candles[candles.Count - 1] = k;
                 tradeView.AddValue(k, true);
@@ -210,7 +223,7 @@ namespace CryptoTrader.Trades
             }
         }
 
-        private void AddPastCandles(List<BinanceKline> pastCandles) {
+        private void AddPastCandles(List<IndicatorKline> pastCandles) {
             candles.AddRange(pastCandles);
             tradeView.AddCandles(pastCandles);
         }

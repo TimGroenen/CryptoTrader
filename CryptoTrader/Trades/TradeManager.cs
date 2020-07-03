@@ -73,7 +73,7 @@ namespace CryptoTrader.Trades
                         //Check for and execute trade
                         ExecuteTrade();
                         UpdateUIText(currentBalance, currentAltBalance, null);
-                        Thread.Sleep(15);
+                        Thread.Sleep(1);
                     }
                 }
                 else

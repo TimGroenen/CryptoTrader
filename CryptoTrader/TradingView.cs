@@ -25,13 +25,21 @@ namespace CryptoTrader
             BackTestDate.MaxDate = DateTime.Now;
         }
 
-        private void startWebsocketButton_Click(object sender, EventArgs e)
-        {
-            tradeManager = new TradeManager(this, new TradeManagerConfig(TrainingStartBalanceNum.Value, BuySizePercentage.Value, (int)ShortMANum.Value, (int)LongMANum.Value), new MomentumStrategy());
+        private void ResetUIValues() {
             candleChart.Series[0].Points.Clear();
             candleChart.Series[1].Points.Clear();
             candleChart.Series[2].Points.Clear();
             candleChart.Series[3].Points.Clear();
+            transactions.Clear();
+            numTrades = 0;
+            avgProfit = 0;
+            totalProfit = 0;
+        }
+
+        private void startWebsocketButton_Click(object sender, EventArgs e)
+        {
+            tradeManager = new TradeManager(this, new TradeManagerConfig(TrainingStartBalanceNum.Value, BuySizePercentage.Value, (int)ShortMANum.Value, (int)LongMANum.Value), new MACrossStrategy());
+            ResetUIValues();
             tradeManager.StartLiveTrading(apiKeyText.Text, apiSecretText.Text);
         }
 
@@ -184,11 +192,8 @@ namespace CryptoTrader
 
         private void BackTestButton_Click(object sender, EventArgs e)
         {
-            tradeManager = new TradeManager(this, new TradeManagerConfig(TrainingStartBalanceNum.Value, BuySizePercentage.Value, (int)ShortMANum.Value, (int)LongMANum.Value), new MomentumStrategy());
-            candleChart.Series[0].Points.Clear();
-            candleChart.Series[1].Points.Clear();
-            candleChart.Series[2].Points.Clear();
-            candleChart.Series[3].Points.Clear();
+            tradeManager = new TradeManager(this, new TradeManagerConfig(TrainingStartBalanceNum.Value, BuySizePercentage.Value, (int)ShortMANum.Value, (int)LongMANum.Value), new MACrossStrategy());
+            ResetUIValues();
             tradeManager.StartBackTesting(apiKeyText.Text, apiSecretText.Text, BackTestDate.Value);
         }
     }

@@ -52,7 +52,7 @@ namespace CryptoTrader.Trades
             SetKeys(key, secret);
 
             //Get past candles to calculate indicators
-            Task<WebCallResult<IEnumerable<BinanceKline>>> task = apiClient.GetKlinesAsync(pair, KlineInterval.OneMinute, startDate, null, 1000, default);
+            Task<WebCallResult<IEnumerable<BinanceKline>>> task = apiClient.GetKlinesAsync(pair, KlineInterval.FifteenMinutes, startDate, null, 1000, default);
 
             Task continueation = task.ContinueWith(t => {
                 if (t.Result.Success)
@@ -146,7 +146,7 @@ namespace CryptoTrader.Trades
 
                     //Update currentBalance
                     currentBalance -= order.Quantity;
-                    currentAltBalance = (order.Quantity - (order.Quantity * (decimal)0.005)) / order.Price;
+                    currentAltBalance += Math.Round(order.Quantity / order.Price, 8) * 0.999M;
                 }
             }
             else
@@ -165,8 +165,8 @@ namespace CryptoTrader.Trades
                     };
 
                     //Update currentBalance
-                    currentBalance += (order.Quantity - (order.Quantity * (decimal)0.005)) * order.Price;
-                    currentAltBalance = 0;
+                    currentBalance += Math.Round(order.Quantity * order.Price, 8) * 0.999M;
+                    currentAltBalance -= order.Quantity;
                 }
             }
 

@@ -16,6 +16,7 @@ namespace CryptoTrader
         private int numTrades = 0;
         private decimal avgProfit = 0;
         private decimal totalProfit = 0;
+        private bool deleteCandles = true;
 
         public TradingView()
         {
@@ -31,6 +32,7 @@ namespace CryptoTrader
             candleChart.Series[2].Points.Clear();
             candleChart.Series[3].Points.Clear();
             transactions.Clear();
+            TransactionsDataGrid.Rows.Clear();
             numTrades = 0;
             avgProfit = 0;
             totalProfit = 0;
@@ -95,7 +97,7 @@ namespace CryptoTrader
                     }
 
                     //Remove candles
-                    if (candleChart.Series[0].Points.Count > 100)
+                    if (candleChart.Series[0].Points.Count > 100 && deleteCandles)
                     {
                         if (candleChart.Series["Transaction"].Points.Count > 0 && candleChart.Series["Transaction"].Points[0].XValue < candleChart.Series["Price"].Points[0].XValue)
                         {
@@ -126,7 +128,7 @@ namespace CryptoTrader
                 {
                     candleChart.Series["Price"].Points.AddXY(k.OpenTime, k.High, k.Low, k.Open, k.Close);
 
-                    if (candleChart.Series["Price"].Points.Count > 100)
+                    if (candleChart.Series["Price"].Points.Count > 100 && deleteCandles)
                     {
                         if (candleChart.Series["Transaction"].Points.Count > 0 && candleChart.Series["Transaction"].Points[0].XValue < candleChart.Series["Price"].Points[0].XValue)
                         {
@@ -178,9 +180,12 @@ namespace CryptoTrader
                     totalProfit += t.Profit;
                     avgProfit = totalProfit / numTrades;
 
+                    TransactionsDataGrid.Rows.Add(transactions.Count, Math.Round(t.BuyPrice, 8).ToString(), Math.Round(t.SellPrice, 8).ToString(), Math.Round(((t.SellPrice - t.BuyPrice)/t.BuyPrice) * 100, 2) + "%");
+                    TransactionsDataGrid.FirstDisplayedScrollingRowIndex = TransactionsDataGrid.RowCount - 1;
+
                     TotalTradesLabel.Text = "Total trades: " + numTrades;
                     TotalProfitLabel.Text = "Total profit: " + Math.Round((((currentBalance - TrainingStartBalanceNum.Value) / TrainingStartBalanceNum.Value) * 100), 2);
-                    AverageProfitLabel.Text = "Average profit: " + avgProfit;
+                    AverageProfitLabel.Text = "Average profit: " + Math.Round(avgProfit, 8);
                     HodlProfitLabel.Text = "HODL profit: " + Math.Round((((transactions[transactions.Count - 1].SellPrice - transactions[0].BuyPrice) / transactions[0].BuyPrice) * 100), 2);
                 }
             }

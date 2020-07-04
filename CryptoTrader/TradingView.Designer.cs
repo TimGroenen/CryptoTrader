@@ -28,12 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series6 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series7 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series8 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend5 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series17 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series18 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series19 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series20 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.candleChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.startWebsocketButton = new System.Windows.Forms.Button();
             this.stopWebsocketButton = new System.Windows.Forms.Button();
@@ -58,64 +58,70 @@
             this.LongMANum = new System.Windows.Forms.NumericUpDown();
             this.label7 = new System.Windows.Forms.Label();
             this.ShortMANum = new System.Windows.Forms.NumericUpDown();
+            this.TransactionsDataGrid = new System.Windows.Forms.DataGridView();
+            this.Id = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.BuyPrice = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.SellPrice = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Profit = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.candleChart)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.TrainingStartBalanceNum)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.BuySizePercentage)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.LongMANum)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ShortMANum)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.TransactionsDataGrid)).BeginInit();
             this.SuspendLayout();
             // 
             // candleChart
             // 
             this.candleChart.BackColor = System.Drawing.Color.Gray;
-            chartArea2.AxisX.LabelAutoFitStyle = ((System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles)(((System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles.IncreaseFont | System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles.DecreaseFont) 
+            chartArea5.AxisX.LabelAutoFitStyle = ((System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles)(((System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles.IncreaseFont | System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles.DecreaseFont) 
             | System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles.StaggeredLabels)));
-            chartArea2.AxisX.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
-            chartArea2.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
-            chartArea2.AxisX.ScrollBar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            chartArea2.AxisX.ScrollBar.IsPositionedInside = false;
-            chartArea2.BackColor = System.Drawing.Color.Gray;
-            chartArea2.BackSecondaryColor = System.Drawing.Color.Gray;
-            chartArea2.Name = "ChartArea1";
-            this.candleChart.ChartAreas.Add(chartArea2);
-            legend2.Enabled = false;
-            legend2.Name = "Legend1";
-            this.candleChart.Legends.Add(legend2);
+            chartArea5.AxisX.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
+            chartArea5.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
+            chartArea5.AxisX.ScrollBar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            chartArea5.AxisX.ScrollBar.IsPositionedInside = false;
+            chartArea5.BackColor = System.Drawing.Color.Gray;
+            chartArea5.BackSecondaryColor = System.Drawing.Color.Gray;
+            chartArea5.Name = "ChartArea1";
+            this.candleChart.ChartAreas.Add(chartArea5);
+            legend5.Enabled = false;
+            legend5.Name = "Legend1";
+            this.candleChart.Legends.Add(legend5);
             this.candleChart.Location = new System.Drawing.Point(0, 300);
             this.candleChart.Name = "candleChart";
-            series5.ChartArea = "ChartArea1";
-            series5.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Candlestick;
-            series5.Color = System.Drawing.Color.White;
-            series5.CustomProperties = "PriceDownColor=Red, PointWidth=0.85, PriceUpColor=Lime";
-            series5.Legend = "Legend1";
-            series5.MarkerBorderColor = System.Drawing.Color.Black;
-            series5.Name = "Price";
-            series5.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.DateTime;
-            series5.YValuesPerPoint = 4;
-            series6.ChartArea = "ChartArea1";
-            series6.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Point;
-            series6.Legend = "Legend1";
-            series6.MarkerBorderColor = System.Drawing.Color.Black;
-            series6.MarkerSize = 15;
-            series6.MarkerStyle = System.Windows.Forms.DataVisualization.Charting.MarkerStyle.Triangle;
-            series6.Name = "Transaction";
-            series6.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.DateTime;
-            series7.ChartArea = "ChartArea1";
-            series7.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
-            series7.Color = System.Drawing.Color.Yellow;
-            series7.Legend = "Legend1";
-            series7.Name = "ShortMA";
-            series7.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.DateTime;
-            series8.ChartArea = "ChartArea1";
-            series8.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
-            series8.Color = System.Drawing.Color.Aqua;
-            series8.Legend = "Legend1";
-            series8.Name = "LongMA";
-            series8.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.DateTime;
-            this.candleChart.Series.Add(series5);
-            this.candleChart.Series.Add(series6);
-            this.candleChart.Series.Add(series7);
-            this.candleChart.Series.Add(series8);
+            series17.ChartArea = "ChartArea1";
+            series17.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Candlestick;
+            series17.Color = System.Drawing.Color.White;
+            series17.CustomProperties = "PriceDownColor=Red, PointWidth=0.85, PriceUpColor=Lime";
+            series17.Legend = "Legend1";
+            series17.MarkerBorderColor = System.Drawing.Color.Black;
+            series17.Name = "Price";
+            series17.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.DateTime;
+            series17.YValuesPerPoint = 4;
+            series18.ChartArea = "ChartArea1";
+            series18.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Point;
+            series18.Legend = "Legend1";
+            series18.MarkerBorderColor = System.Drawing.Color.Black;
+            series18.MarkerSize = 15;
+            series18.MarkerStyle = System.Windows.Forms.DataVisualization.Charting.MarkerStyle.Triangle;
+            series18.Name = "Transaction";
+            series18.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.DateTime;
+            series19.ChartArea = "ChartArea1";
+            series19.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
+            series19.Color = System.Drawing.Color.Yellow;
+            series19.Legend = "Legend1";
+            series19.Name = "ShortMA";
+            series19.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.DateTime;
+            series20.ChartArea = "ChartArea1";
+            series20.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
+            series20.Color = System.Drawing.Color.Aqua;
+            series20.Legend = "Legend1";
+            series20.Name = "LongMA";
+            series20.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.DateTime;
+            this.candleChart.Series.Add(series17);
+            this.candleChart.Series.Add(series18);
+            this.candleChart.Series.Add(series19);
+            this.candleChart.Series.Add(series20);
             this.candleChart.Size = new System.Drawing.Size(1432, 339);
             this.candleChart.TabIndex = 0;
             this.candleChart.Text = "chart1";
@@ -322,7 +328,7 @@
             this.LongMANum.Size = new System.Drawing.Size(120, 20);
             this.LongMANum.TabIndex = 22;
             this.LongMANum.Value = new decimal(new int[] {
-            50,
+            30,
             0,
             0,
             0});
@@ -348,10 +354,48 @@
             this.ShortMANum.Size = new System.Drawing.Size(120, 20);
             this.ShortMANum.TabIndex = 20;
             this.ShortMANum.Value = new decimal(new int[] {
-            10,
+            1,
             0,
             0,
             0});
+            // 
+            // TransactionsDataGrid
+            // 
+            this.TransactionsDataGrid.AllowUserToAddRows = false;
+            this.TransactionsDataGrid.AllowUserToDeleteRows = false;
+            this.TransactionsDataGrid.AllowUserToOrderColumns = true;
+            this.TransactionsDataGrid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.TransactionsDataGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.TransactionsDataGrid.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.Id,
+            this.BuyPrice,
+            this.SellPrice,
+            this.Profit});
+            this.TransactionsDataGrid.Location = new System.Drawing.Point(456, 84);
+            this.TransactionsDataGrid.Name = "TransactionsDataGrid";
+            this.TransactionsDataGrid.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.TransactionsDataGrid.Size = new System.Drawing.Size(896, 229);
+            this.TransactionsDataGrid.TabIndex = 25;
+            // 
+            // Id
+            // 
+            this.Id.HeaderText = "Id";
+            this.Id.Name = "Id";
+            // 
+            // BuyPrice
+            // 
+            this.BuyPrice.HeaderText = "BuyPrice";
+            this.BuyPrice.Name = "BuyPrice";
+            // 
+            // SellPrice
+            // 
+            this.SellPrice.HeaderText = "SellPrice";
+            this.SellPrice.Name = "SellPrice";
+            // 
+            // Profit
+            // 
+            this.Profit.HeaderText = "Profit";
+            this.Profit.Name = "Profit";
             // 
             // TradingView
             // 
@@ -359,6 +403,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Gray;
             this.ClientSize = new System.Drawing.Size(1433, 641);
+            this.Controls.Add(this.TransactionsDataGrid);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.LongMANum);
             this.Controls.Add(this.label7);
@@ -390,6 +435,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.BuySizePercentage)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.LongMANum)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ShortMANum)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.TransactionsDataGrid)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -421,6 +467,11 @@
         private System.Windows.Forms.NumericUpDown LongMANum;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.NumericUpDown ShortMANum;
+        private System.Windows.Forms.DataGridView TransactionsDataGrid;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Id;
+        private System.Windows.Forms.DataGridViewTextBoxColumn BuyPrice;
+        private System.Windows.Forms.DataGridViewTextBoxColumn SellPrice;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Profit;
     }
 }
 

@@ -28,6 +28,8 @@ namespace CryptoTrader.Models
 
         private int shortMA = 25;
         private int longMA = 100;
+        private decimal shortMultiplier;
+        private decimal longMultiplier;
 
         public IndicatorKline(BinanceKline kline, List<IndicatorKline> pastKlines, int shortMA, int longMA) {
             OpenTime = kline.OpenTime;
@@ -43,21 +45,57 @@ namespace CryptoTrader.Models
             TakerBuyQuoteAssetVolume = kline.TakerBuyQuoteAssetVolume;
 
             this.shortMA = shortMA;
+            shortMultiplier = 2 / ((decimal)shortMA + 1);
             this.longMA = longMA;
+            longMultiplier = 2 / ((decimal)longMA + 1);
 
-            ShortMovingAverage = CalculateMA(shortMA, pastKlines);
-            LongMovingAverage = CalculateMA(longMA, pastKlines);
+            ShortMovingAverage = CalculateShortEMA(pastKlines);
+            LongMovingAverage = CalculateLongEMA(pastKlines);
         }
 
-        private decimal CalculateMA(int maLength, List<IndicatorKline> pastKlines) {
-            if (maLength > pastKlines.Count) return -1;
+        private decimal CalculateShortEMA(List<IndicatorKline> pastKlines) {
+            if (pastKlines.Count <= 0) return -1;
 
-            decimal priceSum = Close;
-            for (int x = 1; x <= maLength; x++) {
-                priceSum += pastKlines[pastKlines.Count - x].Close;
+            if (pastKlines[pastKlines.Count - 1].ShortMovingAverage < 0)
+            {
+                //Calculate first SMA
+                if (shortMA > pastKlines.Count) return -1;
+
+                decimal priceSum = Close;
+                for (int x = 1; x <= shortMA; x++)
+                {
+                    priceSum += pastKlines[pastKlines.Count - x].Close;
+                }
+
+                return priceSum / (shortMA + 1);
+            } else {
+                //Calculate EMA
+                return ((Close - pastKlines[pastKlines.Count - 1].ShortMovingAverage) * shortMultiplier) + pastKlines[pastKlines.Count - 1].ShortMovingAverage;
             }
-
-            return priceSum / (maLength + 1);
         }
+        private decimal CalculateLongEMA(List<IndicatorKline> pastKlines)
+        {
+            if (pastKlines.Count <= 0) return -1;
+
+            if (pastKlines[pastKlines.Count - 1].LongMovingAverage < 0)
+            {
+                //Calculate first SMA
+                if (longMA > pastKlines.Count) return -1;
+
+                decimal priceSum = Close;
+                for (int x = 1; x <= longMA; x++)
+                {
+                    priceSum += pastKlines[pastKlines.Count - x].Close;
+                }
+
+                return priceSum / (longMA + 1);
+            }
+            else
+            {
+                //Calculate EMA
+                return ((Close - pastKlines[pastKlines.Count - 1].LongMovingAverage) * longMultiplier) + pastKlines[pastKlines.Count - 1].LongMovingAverage;
+            }
+        }
+
     }
 }

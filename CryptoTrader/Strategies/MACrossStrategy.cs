@@ -15,8 +15,8 @@ namespace CryptoTrader.Strategies
             if (candles.Count < 2) return false;
 
             //Short MA crosses Long MA upward
-            return candles[candles.Count - 1].ShortMovingAverage > candles[candles.Count - 1].LongMovingAverage
-                && candles[candles.Count - 2].ShortMovingAverage < candles[candles.Count - 2].LongMovingAverage;
+            return candles[candles.Count - 1].ShortMovingAverage.Value > candles[candles.Count - 1].LongMovingAverage.Value
+                && candles[candles.Count - 2].ShortMovingAverage.Value < candles[candles.Count - 2].LongMovingAverage.Value;
         }
 
         public bool ShouldSell(List<IndicatorKline> candles)
@@ -24,8 +24,8 @@ namespace CryptoTrader.Strategies
             if (candles.Count < 2) return false;
 
             //Short MA crosses Long MA downward
-            return candles[candles.Count - 1].ShortMovingAverage < candles[candles.Count - 1].LongMovingAverage
-                && candles[candles.Count - 2].ShortMovingAverage > candles[candles.Count - 2].LongMovingAverage;
+            return candles[candles.Count - 1].ShortMovingAverage.Value < candles[candles.Count - 1].LongMovingAverage.Value
+                && candles[candles.Count - 2].ShortMovingAverage.Value > candles[candles.Count - 2].LongMovingAverage.Value;
         }
     }
 }

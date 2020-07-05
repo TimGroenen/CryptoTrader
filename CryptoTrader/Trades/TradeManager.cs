@@ -34,6 +34,7 @@ namespace CryptoTrader.Trades
         private IStrategy strategy;
         private List<BinanceOrder> transactionLog;
         private string pair = "ETHBTC";
+        private KlineInterval interval = KlineInterval.OneDay;
 
         public TradeManager(TradingView tradeView, TradeManagerConfig config, IStrategy strategy) {
             this.tradeView = tradeView;
@@ -52,7 +53,7 @@ namespace CryptoTrader.Trades
             SetKeys(key, secret);
 
             //Get past candles to calculate indicators
-            Task<WebCallResult<IEnumerable<BinanceKline>>> task = apiClient.GetKlinesAsync(pair, KlineInterval.FifteenMinutes, startDate, null, 1000, default);
+            Task<WebCallResult<IEnumerable<BinanceKline>>> task = apiClient.GetKlinesAsync(pair, interval, startDate, null, 1000, default);
 
             Task continueation = task.ContinueWith(t => {
                 if (t.Result.Success)
@@ -73,7 +74,8 @@ namespace CryptoTrader.Trades
                         //Check for and execute trade
                         ExecuteTrade();
                         UpdateUIText(currentBalance, currentAltBalance, null);
-                        Thread.Sleep(1);
+
+                        Thread.Sleep(5);
                     }
                 }
                 else
@@ -90,7 +92,7 @@ namespace CryptoTrader.Trades
             SetKeys(key, secret);
 
             //Get past candles to calculate indicators
-            Task<WebCallResult<IEnumerable<BinanceKline>>> task = apiClient.GetKlinesAsync(pair, KlineInterval.OneMinute, null, null, 100, default);
+            Task<WebCallResult<IEnumerable<BinanceKline>>> task = apiClient.GetKlinesAsync(pair, interval, null, null, 500, default);
             IEnumerable<IndicatorKline> result = new List<IndicatorKline>();
 
             Task continueation = task.ContinueWith(t => {
@@ -115,7 +117,7 @@ namespace CryptoTrader.Trades
             task.Wait();
 
             //Start subscription
-            candleSubscription = websocketClient.SubscribeToKlineUpdates(pair, KlineInterval.OneMinute, update => {
+            candleSubscription = websocketClient.SubscribeToKlineUpdates(pair, interval, update => {
                 //Update UI and candleList
                 UpdateData(new IndicatorKline(update.Data.ToKline(), candles, config.ShortMA, config.LongMA));
 

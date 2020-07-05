@@ -35,24 +35,25 @@ namespace CryptoTrader.Tools
 
 
                 for (int i = 0; i < steps; i++) {
-                    BinanceKline newKline = new BinanceKline();
+                    BinanceKline newKline = new BinanceKline
+                    {
+                        //Set open and close
+                        Open = candle.Open,
+                        Close = i == 0 ? candle.Open + step : output[output.Count - 1].Close + step,
 
-                    //Set open and close
-                    newKline.Open = candle.Open;
-                    newKline.Close = i == 0 ? candle.Open + step : output[output.Count - 1].Close + step;
+                        //Divide volumes by steps
+                        Volume = candle.Volume / steps,
+                        QuoteAssetVolume = candle.QuoteAssetVolume / steps,
+                        TakerBuyQuoteAssetVolume = candle.TakerBuyQuoteAssetVolume / steps,
+                        TakerBuyBaseAssetVolume = candle.TakerBuyBaseAssetVolume / steps,
+                        TradeCount = candle.TradeCount / steps,
 
-                    //Divide volumes by steps
-                    newKline.Volume = candle.Volume / steps;
-                    newKline.QuoteAssetVolume = candle.QuoteAssetVolume / steps;
-                    newKline.TakerBuyQuoteAssetVolume = candle.TakerBuyQuoteAssetVolume / steps;
-                    newKline.TakerBuyBaseAssetVolume = candle.TakerBuyBaseAssetVolume / steps;
-                    newKline.TradeCount = candle.TradeCount / steps;
-
-                    //Take time data and highs and lows from original kline
-                    newKline.OpenTime = candle.OpenTime;
-                    newKline.CloseTime = candle.CloseTime;
-                    newKline.High = candle.High;
-                    newKline.Low = candle.Low;
+                        //Take time data and highs and lows from original kline
+                        OpenTime = candle.OpenTime,
+                        CloseTime = candle.CloseTime,
+                        High = candle.High,
+                        Low = candle.Low
+                    };
 
                     output.Add(new IndicatorKline(newKline, output, config.ShortMA, config.LongMA));
                 }

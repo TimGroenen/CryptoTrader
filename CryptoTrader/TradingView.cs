@@ -38,14 +38,14 @@ namespace CryptoTrader
             totalProfit = 0;
         }
 
-        private void startWebsocketButton_Click(object sender, EventArgs e)
+        private void StartWebsocketButton_Click(object sender, EventArgs e)
         {
             tradeManager = new TradeManager(this, new TradeManagerConfig(TrainingStartBalanceNum.Value, BuySizePercentage.Value, (int)ShortMANum.Value, (int)LongMANum.Value), new MACrossStrategy());
             ResetUIValues();
             tradeManager.StartLiveTrading(apiKeyText.Text, apiSecretText.Text);
         }
 
-        private void stopWebsocketButton_Click(object sender, EventArgs e)
+        private void StopWebsocketButton_Click(object sender, EventArgs e)
         {
             if (tradeManager == null) { 
                 ShowMessage("No socket active");
@@ -72,27 +72,32 @@ namespace CryptoTrader
                     candleChart.Series["Price"].Points.RemoveAt(candleChart.Series["Price"].Points.Count - 1);
                     candleChart.Series["Price"].Points.AddXY(k.OpenTime, k.High, k.Low, k.Open, k.Close);
 
-                    if (k.ShortMovingAverage > 0 && candleChart.Series["ShortMA"].Points.Count > 0) { 
+                    if (k.ShortMovingAverage.Value > 0 && candleChart.Series["ShortMA"].Points.Count > 0) { 
                         candleChart.Series["ShortMA"].Points.RemoveAt(candleChart.Series["ShortMA"].Points.Count - 1);
-                        candleChart.Series["ShortMA"].Points.AddXY(k.OpenTime, k.ShortMovingAverage);
+                        candleChart.Series["ShortMA"].Points.AddXY(k.OpenTime, k.ShortMovingAverage.Value);
 
-                        if (k.LongMovingAverage > 0 && candleChart.Series["LongMA"].Points.Count > 0)
+                        if (k.LongMovingAverage.Value > 0 && candleChart.Series["LongMA"].Points.Count > 0)
                         {
                             candleChart.Series["LongMA"].Points.RemoveAt(candleChart.Series["LongMA"].Points.Count - 1);
-                            candleChart.Series["LongMA"].Points.AddXY(k.OpenTime, k.LongMovingAverage);
+                            candleChart.Series["LongMA"].Points.AddXY(k.OpenTime, k.LongMovingAverage.Value);
                         }
                     }
                 } else {
                     //New candle
                     candleChart.Series["Price"].Points.AddXY(k.OpenTime, k.High, k.Low, k.Open, k.Close);
+                    
+                    //MACD
+                    //candleChart.Series["MACDDiff"].Points.AddXY(k.OpenTime, k.MACD.Value);
+                    //candleChart.Series["MACDSignal"].Points.AddXY(k.OpenTime, k.MACD.Signal);
+                    //candleChart.Series["MACDHisto"].Points.AddXY(k.OpenTime, k.MACD.Histo);
 
-                    if (k.ShortMovingAverage > 0)
+                    if (k.ShortMovingAverage.Value > 0)
                     {
-                        candleChart.Series["ShortMA"].Points.AddXY(k.OpenTime, k.ShortMovingAverage);
+                        candleChart.Series["ShortMA"].Points.AddXY(k.OpenTime, k.ShortMovingAverage.Value);
 
-                        if (k.LongMovingAverage > 0)
+                        if (k.LongMovingAverage.Value > 0)
                         {
-                            candleChart.Series["LongMA"].Points.AddXY(k.OpenTime, k.LongMovingAverage);
+                            candleChart.Series["LongMA"].Points.AddXY(k.OpenTime, k.LongMovingAverage.Value);
                         }
                     }
 
@@ -128,6 +133,16 @@ namespace CryptoTrader
                 {
                     candleChart.Series["Price"].Points.AddXY(k.OpenTime, k.High, k.Low, k.Open, k.Close);
 
+                    if (k.ShortMovingAverage.Value > 0)
+                    {
+                        candleChart.Series["ShortMA"].Points.AddXY(k.OpenTime, k.ShortMovingAverage.Value);
+
+                        if (k.LongMovingAverage.Value > 0)
+                        {
+                            candleChart.Series["LongMA"].Points.AddXY(k.OpenTime, k.LongMovingAverage.Value);
+                        }
+                    }
+
                     if (candleChart.Series["Price"].Points.Count > 100 && deleteCandles)
                     {
                         if (candleChart.Series["Transaction"].Points.Count > 0 && candleChart.Series["Transaction"].Points[0].XValue < candleChart.Series["Price"].Points[0].XValue)
@@ -158,7 +173,7 @@ namespace CryptoTrader
             } else {
                 candleChart.Series["Transaction"].Points.AddXY(openTime, close);
                 candleChart.Series["Transaction"].Points[candleChart.Series["Transaction"].Points.Count - 1].Color = color;
-                candleChart.Series["Transaction"].Points[candleChart.Series["Transaction"].Points.Count - 1].Label = "@ " + close;
+                candleChart.Series["Transaction"].Points[candleChart.Series["Transaction"].Points.Count - 1].Label = "@ " + Math.Round(close, 8);
             }
         }
 
@@ -170,7 +185,8 @@ namespace CryptoTrader
             {
                 UpdateUITextCallback d = new UpdateUITextCallback(UpdateUIText);
                 this.Invoke(d, currentBalance, currentAltBalance, t);
-            } else { 
+            } else {
+                CurrentValueLabel.Text = "Current Value: " + Math.Round((currentAltBalance * (decimal)candleChart.Series["Price"].Points[candleChart.Series["Price"].Points.Count - 1].YValues[3]) + currentBalance, 8);
                 CurrentBalanceLabel.Text = "Current Balance: " + currentBalance;
                 CurrentAltBalanceLabel.Text = "Current Alt Balance: " + currentAltBalance;
 
@@ -184,9 +200,9 @@ namespace CryptoTrader
                     TransactionsDataGrid.FirstDisplayedScrollingRowIndex = TransactionsDataGrid.RowCount - 1;
 
                     TotalTradesLabel.Text = "Total trades: " + numTrades;
-                    TotalProfitLabel.Text = "Total profit: " + Math.Round((((currentBalance - TrainingStartBalanceNum.Value) / TrainingStartBalanceNum.Value) * 100), 2);
+                    TotalProfitLabel.Text = "Total profit: " + Math.Round((((currentBalance - TrainingStartBalanceNum.Value) / TrainingStartBalanceNum.Value) * 100), 2) + "%";
                     AverageProfitLabel.Text = "Average profit: " + Math.Round(avgProfit, 8);
-                    HodlProfitLabel.Text = "HODL profit: " + Math.Round((((transactions[transactions.Count - 1].SellPrice - transactions[0].BuyPrice) / transactions[0].BuyPrice) * 100), 2);
+                    HodlProfitLabel.Text = "HODL profit: " + Math.Round((((transactions[transactions.Count - 1].SellPrice - transactions[0].BuyPrice) / transactions[0].BuyPrice) * 100), 2) + "%";
                 }
             }
         }

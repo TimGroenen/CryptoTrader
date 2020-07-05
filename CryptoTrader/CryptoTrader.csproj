@@ -135,7 +135,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\IndicatorKline.cs" />
+    <Compile Include="Models\Indicators\EMAIndicator.cs" />
+    <Compile Include="Models\Indicators\MACDIndicator.cs" />
     <Compile Include="Strategies\IStrategy.cs" />
+    <Compile Include="Strategies\MACDStrategy.cs" />
     <Compile Include="Strategies\MACrossStrategy.cs" />
     <Compile Include="Strategies\MomentumStrategy.cs" />
     <Compile Include="Tools\CandleGranulation.cs" />

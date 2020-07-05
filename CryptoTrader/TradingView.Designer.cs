@@ -28,12 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend5 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series17 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series18 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series19 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series20 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.candleChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.startWebsocketButton = new System.Windows.Forms.Button();
             this.stopWebsocketButton = new System.Windows.Forms.Button();
@@ -63,6 +63,7 @@
             this.BuyPrice = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.SellPrice = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Profit = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.CurrentValueLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.candleChart)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.TrainingStartBalanceNum)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.BuySizePercentage)).BeginInit();
@@ -74,55 +75,55 @@
             // candleChart
             // 
             this.candleChart.BackColor = System.Drawing.Color.Gray;
-            chartArea5.AxisX.LabelAutoFitStyle = ((System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles)(((System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles.IncreaseFont | System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles.DecreaseFont) 
+            chartArea1.AxisX.LabelAutoFitStyle = ((System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles)(((System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles.IncreaseFont | System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles.DecreaseFont) 
             | System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles.StaggeredLabels)));
-            chartArea5.AxisX.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
-            chartArea5.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
-            chartArea5.AxisX.ScrollBar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            chartArea5.AxisX.ScrollBar.IsPositionedInside = false;
-            chartArea5.BackColor = System.Drawing.Color.Gray;
-            chartArea5.BackSecondaryColor = System.Drawing.Color.Gray;
-            chartArea5.Name = "ChartArea1";
-            this.candleChart.ChartAreas.Add(chartArea5);
-            legend5.Enabled = false;
-            legend5.Name = "Legend1";
-            this.candleChart.Legends.Add(legend5);
-            this.candleChart.Location = new System.Drawing.Point(0, 300);
+            chartArea1.AxisX.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
+            chartArea1.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
+            chartArea1.AxisX.ScrollBar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            chartArea1.AxisX.ScrollBar.IsPositionedInside = false;
+            chartArea1.BackColor = System.Drawing.Color.Gray;
+            chartArea1.BackSecondaryColor = System.Drawing.Color.Gray;
+            chartArea1.Name = "ChartArea1";
+            this.candleChart.ChartAreas.Add(chartArea1);
+            legend1.Enabled = false;
+            legend1.Name = "Legend1";
+            this.candleChart.Legends.Add(legend1);
+            this.candleChart.Location = new System.Drawing.Point(0, 293);
             this.candleChart.Name = "candleChart";
-            series17.ChartArea = "ChartArea1";
-            series17.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Candlestick;
-            series17.Color = System.Drawing.Color.White;
-            series17.CustomProperties = "PriceDownColor=Red, PointWidth=0.85, PriceUpColor=Lime";
-            series17.Legend = "Legend1";
-            series17.MarkerBorderColor = System.Drawing.Color.Black;
-            series17.Name = "Price";
-            series17.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.DateTime;
-            series17.YValuesPerPoint = 4;
-            series18.ChartArea = "ChartArea1";
-            series18.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Point;
-            series18.Legend = "Legend1";
-            series18.MarkerBorderColor = System.Drawing.Color.Black;
-            series18.MarkerSize = 15;
-            series18.MarkerStyle = System.Windows.Forms.DataVisualization.Charting.MarkerStyle.Triangle;
-            series18.Name = "Transaction";
-            series18.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.DateTime;
-            series19.ChartArea = "ChartArea1";
-            series19.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
-            series19.Color = System.Drawing.Color.Yellow;
-            series19.Legend = "Legend1";
-            series19.Name = "ShortMA";
-            series19.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.DateTime;
-            series20.ChartArea = "ChartArea1";
-            series20.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
-            series20.Color = System.Drawing.Color.Aqua;
-            series20.Legend = "Legend1";
-            series20.Name = "LongMA";
-            series20.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.DateTime;
-            this.candleChart.Series.Add(series17);
-            this.candleChart.Series.Add(series18);
-            this.candleChart.Series.Add(series19);
-            this.candleChart.Series.Add(series20);
-            this.candleChart.Size = new System.Drawing.Size(1432, 339);
+            series1.ChartArea = "ChartArea1";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Candlestick;
+            series1.Color = System.Drawing.Color.White;
+            series1.CustomProperties = "PriceDownColor=Red, PointWidth=0.85, PriceUpColor=Lime";
+            series1.Legend = "Legend1";
+            series1.MarkerBorderColor = System.Drawing.Color.Black;
+            series1.Name = "Price";
+            series1.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.DateTime;
+            series1.YValuesPerPoint = 4;
+            series2.ChartArea = "ChartArea1";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Point;
+            series2.Legend = "Legend1";
+            series2.MarkerBorderColor = System.Drawing.Color.Black;
+            series2.MarkerSize = 15;
+            series2.MarkerStyle = System.Windows.Forms.DataVisualization.Charting.MarkerStyle.Triangle;
+            series2.Name = "Transaction";
+            series2.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.DateTime;
+            series3.ChartArea = "ChartArea1";
+            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
+            series3.Color = System.Drawing.Color.Yellow;
+            series3.Legend = "Legend1";
+            series3.Name = "ShortMA";
+            series3.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.DateTime;
+            series4.ChartArea = "ChartArea1";
+            series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
+            series4.Color = System.Drawing.Color.Aqua;
+            series4.Legend = "Legend1";
+            series4.Name = "LongMA";
+            series4.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.DateTime;
+            this.candleChart.Series.Add(series1);
+            this.candleChart.Series.Add(series2);
+            this.candleChart.Series.Add(series3);
+            this.candleChart.Series.Add(series4);
+            this.candleChart.Size = new System.Drawing.Size(1432, 346);
             this.candleChart.TabIndex = 0;
             this.candleChart.Text = "chart1";
             // 
@@ -135,7 +136,7 @@
             this.startWebsocketButton.TabIndex = 1;
             this.startWebsocketButton.Text = "Start";
             this.startWebsocketButton.UseVisualStyleBackColor = false;
-            this.startWebsocketButton.Click += new System.EventHandler(this.startWebsocketButton_Click);
+            this.startWebsocketButton.Click += new System.EventHandler(this.StartWebsocketButton_Click);
             // 
             // stopWebsocketButton
             // 
@@ -146,7 +147,7 @@
             this.stopWebsocketButton.TabIndex = 2;
             this.stopWebsocketButton.Text = "Stop";
             this.stopWebsocketButton.UseVisualStyleBackColor = false;
-            this.stopWebsocketButton.Click += new System.EventHandler(this.stopWebsocketButton_Click);
+            this.stopWebsocketButton.Click += new System.EventHandler(this.StopWebsocketButton_Click);
             // 
             // apiKeyText
             // 
@@ -190,7 +191,7 @@
             0,
             0,
             131072});
-            this.TrainingStartBalanceNum.Location = new System.Drawing.Point(121, 84);
+            this.TrainingStartBalanceNum.Location = new System.Drawing.Point(121, 56);
             this.TrainingStartBalanceNum.Name = "TrainingStartBalanceNum";
             this.TrainingStartBalanceNum.Size = new System.Drawing.Size(120, 20);
             this.TrainingStartBalanceNum.TabIndex = 7;
@@ -203,7 +204,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 86);
+            this.label3.Location = new System.Drawing.Point(12, 58);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(103, 13);
             this.label3.TabIndex = 8;
@@ -212,7 +213,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(12, 112);
+            this.label4.Location = new System.Drawing.Point(12, 84);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(66, 13);
             this.label4.TabIndex = 10;
@@ -220,7 +221,7 @@
             // 
             // BuySizePercentage
             // 
-            this.BuySizePercentage.Location = new System.Drawing.Point(121, 110);
+            this.BuySizePercentage.Location = new System.Drawing.Point(121, 82);
             this.BuySizePercentage.Name = "BuySizePercentage";
             this.BuySizePercentage.Size = new System.Drawing.Size(120, 20);
             this.BuySizePercentage.TabIndex = 9;
@@ -233,7 +234,7 @@
             // CurrentBalanceLabel
             // 
             this.CurrentBalanceLabel.AutoSize = true;
-            this.CurrentBalanceLabel.Location = new System.Drawing.Point(12, 150);
+            this.CurrentBalanceLabel.Location = new System.Drawing.Point(12, 136);
             this.CurrentBalanceLabel.Name = "CurrentBalanceLabel";
             this.CurrentBalanceLabel.Size = new System.Drawing.Size(35, 13);
             this.CurrentBalanceLabel.TabIndex = 11;
@@ -242,7 +243,7 @@
             // CurrentAltBalanceLabel
             // 
             this.CurrentAltBalanceLabel.AutoSize = true;
-            this.CurrentAltBalanceLabel.Location = new System.Drawing.Point(12, 175);
+            this.CurrentAltBalanceLabel.Location = new System.Drawing.Point(12, 161);
             this.CurrentAltBalanceLabel.Name = "CurrentAltBalanceLabel";
             this.CurrentAltBalanceLabel.Size = new System.Drawing.Size(35, 13);
             this.CurrentAltBalanceLabel.TabIndex = 12;
@@ -261,7 +262,7 @@
             // TotalProfitLabel
             // 
             this.TotalProfitLabel.AutoSize = true;
-            this.TotalProfitLabel.Location = new System.Drawing.Point(12, 228);
+            this.TotalProfitLabel.Location = new System.Drawing.Point(12, 214);
             this.TotalProfitLabel.Name = "TotalProfitLabel";
             this.TotalProfitLabel.Size = new System.Drawing.Size(35, 13);
             this.TotalProfitLabel.TabIndex = 15;
@@ -270,7 +271,7 @@
             // TotalTradesLabel
             // 
             this.TotalTradesLabel.AutoSize = true;
-            this.TotalTradesLabel.Location = new System.Drawing.Point(12, 203);
+            this.TotalTradesLabel.Location = new System.Drawing.Point(12, 189);
             this.TotalTradesLabel.Name = "TotalTradesLabel";
             this.TotalTradesLabel.Size = new System.Drawing.Size(35, 13);
             this.TotalTradesLabel.TabIndex = 14;
@@ -279,7 +280,7 @@
             // AverageProfitLabel
             // 
             this.AverageProfitLabel.AutoSize = true;
-            this.AverageProfitLabel.Location = new System.Drawing.Point(12, 252);
+            this.AverageProfitLabel.Location = new System.Drawing.Point(12, 238);
             this.AverageProfitLabel.Name = "AverageProfitLabel";
             this.AverageProfitLabel.Size = new System.Drawing.Size(35, 13);
             this.AverageProfitLabel.TabIndex = 16;
@@ -306,7 +307,7 @@
             // HodlProfitLabel
             // 
             this.HodlProfitLabel.AutoSize = true;
-            this.HodlProfitLabel.Location = new System.Drawing.Point(12, 275);
+            this.HodlProfitLabel.Location = new System.Drawing.Point(12, 260);
             this.HodlProfitLabel.Name = "HodlProfitLabel";
             this.HodlProfitLabel.Size = new System.Drawing.Size(35, 13);
             this.HodlProfitLabel.TabIndex = 19;
@@ -315,7 +316,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(270, 112);
+            this.label6.Location = new System.Drawing.Point(270, 84);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(53, 13);
             this.label6.TabIndex = 23;
@@ -323,7 +324,7 @@
             // 
             // LongMANum
             // 
-            this.LongMANum.Location = new System.Drawing.Point(330, 110);
+            this.LongMANum.Location = new System.Drawing.Point(330, 82);
             this.LongMANum.Name = "LongMANum";
             this.LongMANum.Size = new System.Drawing.Size(120, 20);
             this.LongMANum.TabIndex = 22;
@@ -336,7 +337,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(270, 86);
+            this.label7.Location = new System.Drawing.Point(270, 58);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(54, 13);
             this.label7.TabIndex = 21;
@@ -349,7 +350,7 @@
             0,
             0,
             131072});
-            this.ShortMANum.Location = new System.Drawing.Point(330, 84);
+            this.ShortMANum.Location = new System.Drawing.Point(330, 56);
             this.ShortMANum.Name = "ShortMANum";
             this.ShortMANum.Size = new System.Drawing.Size(120, 20);
             this.ShortMANum.TabIndex = 20;
@@ -371,10 +372,10 @@
             this.BuyPrice,
             this.SellPrice,
             this.Profit});
-            this.TransactionsDataGrid.Location = new System.Drawing.Point(456, 84);
+            this.TransactionsDataGrid.Location = new System.Drawing.Point(456, 58);
             this.TransactionsDataGrid.Name = "TransactionsDataGrid";
             this.TransactionsDataGrid.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.TransactionsDataGrid.Size = new System.Drawing.Size(896, 229);
+            this.TransactionsDataGrid.Size = new System.Drawing.Size(965, 229);
             this.TransactionsDataGrid.TabIndex = 25;
             // 
             // Id
@@ -397,12 +398,22 @@
             this.Profit.HeaderText = "Profit";
             this.Profit.Name = "Profit";
             // 
+            // CurrentValueLabel
+            // 
+            this.CurrentValueLabel.AutoSize = true;
+            this.CurrentValueLabel.Location = new System.Drawing.Point(12, 114);
+            this.CurrentValueLabel.Name = "CurrentValueLabel";
+            this.CurrentValueLabel.Size = new System.Drawing.Size(35, 13);
+            this.CurrentValueLabel.TabIndex = 26;
+            this.CurrentValueLabel.Text = "label5";
+            // 
             // TradingView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Gray;
             this.ClientSize = new System.Drawing.Size(1433, 641);
+            this.Controls.Add(this.CurrentValueLabel);
             this.Controls.Add(this.TransactionsDataGrid);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.LongMANum);
@@ -472,6 +483,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn BuyPrice;
         private System.Windows.Forms.DataGridViewTextBoxColumn SellPrice;
         private System.Windows.Forms.DataGridViewTextBoxColumn Profit;
+        private System.Windows.Forms.Label CurrentValueLabel;
     }
 }
 

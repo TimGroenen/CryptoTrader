@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using Binance.Net.Enums;
 using Binance.Net.Objects.Spot.MarketData;
 using CryptoTrader.Models;
 using CryptoTrader.Strategies;
@@ -215,7 +216,7 @@ namespace CryptoTrader
         {
             tradeManager = new TradeManager(this, new TradeManagerConfig(TrainingStartBalanceNum.Value, BuySizePercentage.Value, (int)ShortMANum.Value, (int)LongMANum.Value), new MACrossStrategy());
             ResetUIValues();
-            tradeManager.StartBackTesting(apiKeyText.Text, apiSecretText.Text, BackTestDate.Value);
+            tradeManager.StartBackTesting(apiKeyText.Text, apiSecretText.Text, BackTestDate.Value, BackTestEndDate.Value, KlineInterval.OneHour);
         }
     }
 }

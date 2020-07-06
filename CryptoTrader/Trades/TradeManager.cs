@@ -48,43 +48,57 @@ namespace CryptoTrader.Trades
             this.strategy = strategy;
         }
 
-        public void StartBackTesting(string key, string secret, DateTime startDate) {
+        public void StartBackTesting(string key, string secret, DateTime startDate, DateTime endTime, KlineInterval klineInterval) {
             //Configure settings
             SetKeys(key, secret);
 
-            //Get past candles to calculate indicators
-            Task<WebCallResult<IEnumerable<BinanceKline>>> task = apiClient.GetKlinesAsync(pair, interval, startDate, null, 1000, default);
+            //Create new task to handle the backtesting otherwise the UI hangs
+            Task backtestTask = Task.Run(() => {
+                DateTime currentTime = startDate;
+                int lastIndex = 0;
 
-            Task continueation = task.ContinueWith(t => {
-                if (t.Result.Success)
-                {
-                    List<IndicatorKline> data = new List<IndicatorKline>();
+                while (currentTime < endTime) {
+                    //Get past candles to calculate indicators
+                    Task<WebCallResult<IEnumerable<BinanceKline>>> t = apiClient.GetKlinesAsync(pair, klineInterval, currentTime, null, 1000, default);
+                    List<BinanceKline> result = t.GetAwaiter().GetResult().Data.ToList();
 
-                    foreach (BinanceKline bk in t.Result.Data.ToList()) {
-                        data.Add(new IndicatorKline(bk, data, config.ShortMA, config.LongMA));
-                    }
-
-                    backTestData.AddRange(CandleGranulation.AverageOpenToClose(data, 3, config));
-
-                    foreach (IndicatorKline k in backTestData)
+                    if (t.Result.Success)
                     {
-                        //Update UI and candleList
-                        UpdateData(k);
+                        List<IndicatorKline> data = new List<IndicatorKline>();
 
-                        //Check for and execute trade
-                        ExecuteTrade();
-                        UpdateUIText(currentBalance, currentAltBalance, null);
+                        for (int i = 0; i < result.Count - 1; i++)
+                        {
+                            if (i == 0 && candles.Count > 0)
+                            {
+                                data.Add(new IndicatorKline(result[i], candles, config.ShortMA, config.LongMA));
+                            }
+                            else
+                            {
+                                data.Add(new IndicatorKline(result[i], data, config.ShortMA, config.LongMA));
+                            }
+                        }
 
-                        Thread.Sleep(5);
+                        backTestData.AddRange(CandleGranulation.AverageOpenToClose(data, 3, config));
+
+                        foreach (IndicatorKline k in backTestData.GetRange(lastIndex, backTestData.Count - (lastIndex + 1)))
+                        {
+                            //Update UI and candleList
+                            UpdateData(k);
+
+                            //Check for and execute trade
+                            ExecuteTrade();
+                            UpdateUIText(currentBalance, currentAltBalance, null);
+                        }
                     }
-                }
-                else
-                {
-                    tradeView.ShowMessage(t.Result.Error.Message);
+                    else
+                    {
+                        tradeView.ShowMessage(t.Result.Error.Message);
+                    }
+
+                    lastIndex = backTestData.Count - 1;
+                    currentTime = result[result.Count - 1].OpenTime;
                 }
             });
-
-            task.Wait();
         }
 
         public void StartLiveTrading(string key, string secret) {

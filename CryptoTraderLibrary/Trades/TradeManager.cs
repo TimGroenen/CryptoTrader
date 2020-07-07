@@ -78,7 +78,7 @@ namespace CryptoTraderLibrary.Trades
                             }
                         }
 
-                        backTestData.AddRange(CandleGranulation.AverageOpenToClose(data, 3, config));
+                        backTestData.AddRange(CandleGranulation.IncludeHighsAndLows(data, config));
 
                         foreach (IndicatorKline k in backTestData.GetRange(lastIndex, backTestData.Count - (lastIndex + 1)))
                         {

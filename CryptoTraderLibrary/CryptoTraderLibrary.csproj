@@ -134,6 +134,8 @@
     <Compile Include="Models\Indicators\MACDIndicator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Interfaces\IStrategy.cs" />
+    <Compile Include="Strategies\Analysis\TrendAnalysis.cs" />
+    <Compile Include="Strategies\Analysis\TrendType.cs" />
     <Compile Include="Strategies\MACDStrategy.cs" />
     <Compile Include="Strategies\MACrossStrategy.cs" />
     <Compile Include="Strategies\MomentumStrategy.cs" />

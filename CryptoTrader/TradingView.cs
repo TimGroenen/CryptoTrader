@@ -17,6 +17,10 @@ namespace CryptoTrader
         private int numTrades = 0;
         private decimal avgProfit = 0;
         private decimal totalProfit = 0;
+        private int winningTrades = 0;
+        private int losingTrades = 0;
+        private decimal maxWin = 0;
+        private decimal maxLoss = 0;
         private bool deleteCandles = true;
 
         public TradingView()
@@ -37,6 +41,8 @@ namespace CryptoTrader
             numTrades = 0;
             avgProfit = 0;
             totalProfit = 0;
+            winningTrades = 0;
+            losingTrades = 0;
         }
 
         private void StartWebsocketButton_Click(object sender, EventArgs e)
@@ -197,10 +203,25 @@ namespace CryptoTrader
                     totalProfit += t.Profit;
                     avgProfit = totalProfit / numTrades;
 
+                    decimal profit = ((t.SellPrice - t.BuyPrice) / t.BuyPrice) * 100;
+                    if (profit > 0.1M) {
+                        winningTrades++;
+                    } else {
+                        losingTrades++;
+                    }
+
+                    if (profit > maxWin) maxWin = profit;
+                    if (profit < maxLoss) maxLoss = profit;
+
                     TransactionsDataGrid.Rows.Add(transactions.Count, Math.Round(t.BuyPrice, 8).ToString(), Math.Round(t.SellPrice, 8).ToString(), Math.Round(((t.SellPrice - t.BuyPrice)/t.BuyPrice) * 100, 2) + "%");
                     TransactionsDataGrid.FirstDisplayedScrollingRowIndex = TransactionsDataGrid.RowCount - 1;
 
                     TotalTradesLabel.Text = "Total trades: " + numTrades;
+                    TradeWinPercentage.Text = "Win percentage: " + Math.Round((winningTrades/(decimal)numTrades) * 100, 2) + "%";
+                    WinTradesLabel.Text = "Winning trades: " + winningTrades;
+                    TradeLossLabel.Text = "Losing trades: " + losingTrades;
+                    MaxLossLabel.Text = "Max loss: " + Math.Round(maxLoss, 2) + "%";
+                    MaxWinLabel.Text = "Max win: " + Math.Round(maxWin, 2) + "%";
                     TotalProfitLabel.Text = "Total profit: " + Math.Round((((currentBalance - TrainingStartBalanceNum.Value) / TrainingStartBalanceNum.Value) * 100), 2) + "%";
                     AverageProfitLabel.Text = "Average profit: " + Math.Round(avgProfit, 8);
                     HodlProfitLabel.Text = "HODL profit: " + Math.Round((((transactions[transactions.Count - 1].SellPrice - transactions[0].BuyPrice) / transactions[0].BuyPrice) * 100), 2) + "%";

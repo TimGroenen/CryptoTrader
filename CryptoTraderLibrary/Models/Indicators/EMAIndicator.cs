@@ -26,10 +26,10 @@ namespace CryptoTraderLibrary.Models.Indicators
                     return; 
                 }
 
-                decimal priceSum = thisKline.Open;
+                decimal priceSum = thisKline.Close;
                 for (int x = 1; x <= MALength; x++)
                 {
-                    priceSum += pastKlines[pastKlines.Count - x].Open;
+                    priceSum += pastKlines[pastKlines.Count - x].Close;
                 }
 
                 Value = priceSum / (MALength + 1);
@@ -37,12 +37,12 @@ namespace CryptoTraderLibrary.Models.Indicators
                 if (shortMA)
                 {
                     //Calculate Short EMA
-                    Value = ((thisKline.Open - pastKlines[pastKlines.Count - 1].ShortMovingAverage.Value) * Multiplier) + pastKlines[pastKlines.Count - 1].ShortMovingAverage.Value;
+                    Value = ((thisKline.Close - pastKlines[pastKlines.Count - 1].ShortMovingAverage.Value) * Multiplier) + pastKlines[pastKlines.Count - 1].ShortMovingAverage.Value;
                 }
                 else
                 {
                     //Calculate Long EMA
-                    Value = ((thisKline.Open - pastKlines[pastKlines.Count - 1].LongMovingAverage.Value) * Multiplier) + pastKlines[pastKlines.Count - 1].LongMovingAverage.Value;
+                    Value = ((thisKline.Close - pastKlines[pastKlines.Count - 1].LongMovingAverage.Value) * Multiplier) + pastKlines[pastKlines.Count - 1].LongMovingAverage.Value;
                 }
             }
         }

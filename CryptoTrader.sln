@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30204.135
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CryptoTrader", "CryptoTrader\CryptoTrader.csproj", "{306E0EF2-6EE6-4B6E-BCF6-0D98FA5EE2A5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CryptoTraderWinForms", "CryptoTrader\CryptoTraderWinForms.csproj", "{306E0EF2-6EE6-4B6E-BCF6-0D98FA5EE2A5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CryptoTraderLibrary", "CryptoTraderLibrary\CryptoTraderLibrary.csproj", "{BED9F386-D27E-4249-8918-8BE67A4584D0}"
 EndProject

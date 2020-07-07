@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using Binance.Net.Enums;
-using Binance.Net.Objects.Spot.MarketData;
-using CryptoTrader.Models;
-using CryptoTrader.Strategies;
-using CryptoTrader.Trades;
+using CryptoTrader.Trading;
+using CryptoTraderLibrary.Models;
+using CryptoTraderLibrary.Strategies;
+using CryptoTraderLibrary.Trades;
 
 namespace CryptoTrader
 {
@@ -41,7 +41,7 @@ namespace CryptoTrader
 
         private void StartWebsocketButton_Click(object sender, EventArgs e)
         {
-            tradeManager = new TradeManager(this, new TradeManagerConfig(TrainingStartBalanceNum.Value, BuySizePercentage.Value, (int)ShortMANum.Value, (int)LongMANum.Value), new MACrossStrategy());
+            tradeManager = new TradeManager(new UIConnection(this), new TradeManagerConfig(TrainingStartBalanceNum.Value, BuySizePercentage.Value, (int)ShortMANum.Value, (int)LongMANum.Value, KlineInterval.OneHour), new MACrossStrategy());
             ResetUIValues();
             tradeManager.StartLiveTrading(apiKeyText.Text, apiSecretText.Text);
         }
@@ -214,9 +214,9 @@ namespace CryptoTrader
 
         private void BackTestButton_Click(object sender, EventArgs e)
         {
-            tradeManager = new TradeManager(this, new TradeManagerConfig(TrainingStartBalanceNum.Value, BuySizePercentage.Value, (int)ShortMANum.Value, (int)LongMANum.Value), new MACrossStrategy());
+            tradeManager = new TradeManager(new UIConnection(this), new TradeManagerConfig(TrainingStartBalanceNum.Value, BuySizePercentage.Value, (int)ShortMANum.Value, (int)LongMANum.Value, KlineInterval.OneHour), new MACrossStrategy());
             ResetUIValues();
-            tradeManager.StartBackTesting(apiKeyText.Text, apiSecretText.Text, BackTestDate.Value, BackTestEndDate.Value, KlineInterval.OneHour);
+            tradeManager.StartBackTesting(apiKeyText.Text, apiSecretText.Text, BackTestDate.Value, BackTestEndDate.Value);
         }
     }
 }

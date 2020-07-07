@@ -1,11 +1,8 @@
-﻿using CryptoTrader.Models;
-using System;
+﻿using CryptoTraderLibrary.Interfaces;
+using CryptoTraderLibrary.Models;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace CryptoTrader.Strategies
+namespace CryptoTraderLibrary.Strategies
 {
     public class MACDStrategy : IStrategy
     {

@@ -1,12 +1,7 @@
-﻿using Binance.Net.Objects.Spot.MarketData;
-using CryptoTrader.Models;
-using System;
+﻿using CryptoTraderLibrary.Models;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace CryptoTrader.Strategies
+namespace CryptoTraderLibrary.Interfaces
 {
     public interface IStrategy
     {

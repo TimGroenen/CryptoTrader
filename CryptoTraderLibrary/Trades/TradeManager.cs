@@ -6,17 +6,16 @@ using Binance.Net.Objects.Spot.SpotData;
 using CryptoExchange.Net.Authentication;
 using CryptoExchange.Net.Objects;
 using CryptoExchange.Net.Sockets;
-using CryptoTrader.Models;
-using CryptoTrader.Strategies;
-using CryptoTrader.Tools;
+using CryptoTraderLibrary.Models;
+using CryptoTraderLibrary.Interfaces;
+using CryptoTraderLibrary.Tools;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
+using System.Drawing;
 
-namespace CryptoTrader.Trades
+namespace CryptoTraderLibrary.Trades
 {
     //Manages the trades and updates the UI
     public class TradeManager
@@ -25,7 +24,7 @@ namespace CryptoTrader.Trades
         private readonly BinanceClient apiClient;
         private List<IndicatorKline> backTestData;
         private List<IndicatorKline> candles;
-        private readonly TradingView tradeView;
+        private readonly IUIConnection tradeView;
         private CallResult<UpdateSubscription> candleSubscription;
         private TradeManagerConfig config;
         private decimal currentBalance = 0;
@@ -34,9 +33,9 @@ namespace CryptoTrader.Trades
         private IStrategy strategy;
         private List<BinanceOrder> transactionLog;
         private string pair = "ETHBTC";
-        private KlineInterval interval = KlineInterval.OneDay;
+        private KlineInterval interval;
 
-        public TradeManager(TradingView tradeView, TradeManagerConfig config, IStrategy strategy) {
+        public TradeManager(IUIConnection tradeView, TradeManagerConfig config, IStrategy strategy) {
             this.tradeView = tradeView;
             this.websocketClient = new BinanceSocketClient();
             this.apiClient = new BinanceClient();
@@ -46,9 +45,10 @@ namespace CryptoTrader.Trades
             currentBalance = config.BalanceStart;
             transactionLog = new List<BinanceOrder>();
             this.strategy = strategy;
+            this.interval = config.interval;
         }
 
-        public void StartBackTesting(string key, string secret, DateTime startDate, DateTime endTime, KlineInterval klineInterval) {
+        public void StartBackTesting(string key, string secret, DateTime startDate, DateTime endTime) {
             //Configure settings
             SetKeys(key, secret);
 
@@ -59,7 +59,7 @@ namespace CryptoTrader.Trades
 
                 while (currentTime < endTime) {
                     //Get past candles to calculate indicators
-                    Task<WebCallResult<IEnumerable<BinanceKline>>> t = apiClient.GetKlinesAsync(pair, klineInterval, currentTime, null, 1000, default);
+                    Task<WebCallResult<IEnumerable<BinanceKline>>> t = apiClient.GetKlinesAsync(pair, interval, currentTime, null, 1000, default);
                     List<BinanceKline> result = t.GetAwaiter().GetResult().Data.ToList();
 
                     if (t.Result.Success)

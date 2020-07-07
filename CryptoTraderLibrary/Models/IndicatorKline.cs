@@ -1,12 +1,9 @@
 ﻿using Binance.Net.Objects.Spot.MarketData;
-using CryptoTrader.Models.Indicators;
+using CryptoTraderLibrary.Models.Indicators;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace CryptoTrader.Models
+namespace CryptoTraderLibrary.Models
 {
     public class IndicatorKline
     {

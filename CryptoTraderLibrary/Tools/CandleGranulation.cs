@@ -1,15 +1,9 @@
 ﻿using Binance.Net.Objects.Spot.MarketData;
-using CryptoTrader.Models;
-using CryptoTrader.Trades;
-using System;
+using CryptoTraderLibrary.Models;
+using CryptoTraderLibrary.Trades;
 using System.Collections.Generic;
-using System.Data.Odbc;
-using System.Linq;
-using System.Runtime.Remoting.Messaging;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace CryptoTrader.Tools
+namespace CryptoTraderLibrary.Tools
 {
     static class CandleGranulation
     {

@@ -1,12 +1,8 @@
-﻿using Binance.Net.Objects.Spot.MarketData;
-using CryptoTrader.Models;
-using System;
+﻿using CryptoTraderLibrary.Models;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using CryptoTraderLibrary.Interfaces;
 
-namespace CryptoTrader.Strategies
+namespace CryptoTraderLibrary.Strategies
 {
     class MomentumStrategy : IStrategy
     {

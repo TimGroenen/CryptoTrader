@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CryptoTrader.Trades
+namespace CryptoTraderLibrary.Trades
 {
     public class Transaction
     {

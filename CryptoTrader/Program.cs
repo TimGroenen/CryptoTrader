@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Binance.Net;
+using Binance.Net.Objects.Spot;
+using CryptoExchange.Net.Authentication;
+using CryptoExchange.Net.Logging;
 
 namespace CryptoTrader
 {
@@ -16,7 +20,7 @@ namespace CryptoTrader
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            Application.Run(new TradingView());
         }
     }
 }
